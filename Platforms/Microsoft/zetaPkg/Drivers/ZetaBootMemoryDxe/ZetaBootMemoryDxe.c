@@ -298,8 +298,10 @@ AddMemory (
 
     for (Other = 0; (Other < PieceCount) && (Added < ADD_LIMIT); Other++) {
       Base = ALIGN_VALUE (Pieces[Other].Base, SIZE_2MB);
-      End  = Pieces[Other].End & ~((UINT64)SIZE_2MB - 1);
-      if ((End <= Base) || (End - Base < MIN_PIECE_SIZE) || (End > ADD_BELOW)) {
+      // A bank can cross the mapped address limit. Keep its usable prefix
+      // instead of dropping the entire bank, including memory below 4 GiB.
+      End  = MIN (Pieces[Other].End, ADD_BELOW) & ~((UINT64)SIZE_2MB - 1);
+      if ((End <= Base) || (End - Base < MIN_PIECE_SIZE)) {
         continue;
       }
 
