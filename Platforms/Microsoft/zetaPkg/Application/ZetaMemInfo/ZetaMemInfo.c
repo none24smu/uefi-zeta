@@ -6,7 +6,9 @@
     from the SMEM RAM partition table at boot; the dumped tree has a zero
     placeholder), and the contiguous DRAM run from the lowest bank;
   * the boot CPU MPIDR, the current exception level and CNTFRQ_EL0;
-  * the GOP mode, including the line pitch.
+  * the GOP mode, including the line pitch;
+  * the boot CPU's MIDR and ID registers, with the fields arm64e code relies
+    on decoded (pointer authentication, LRCPC, FlagM, BTI, SME).
 
   The tree is found through the entry argument HOB that SEC keeps (x0 from
   ABL), the same source ZetaBootMemoryDxe uses. Every line starts with
@@ -184,6 +186,63 @@ PrintGop (
   Print (L"ZETAINFO: GOP frame buffer 0x%lx size 0x%lx\n", Gop->Mode->FrameBufferBase, (UINT64)Gop->Mode->FrameBufferSize);
 }
 
+//
+// Encoded names, so the reserved ID space (ID_AA64ISAR2_EL1) reads as zero
+// on cores that predate it instead of needing assembler support.
+//
+#define READ_SYSREG(Name)  ({ UINT64 _Value; __asm__ volatile ("mrs %0, " Name : "=r" (_Value)); _Value; })
+#define FIELD(Value, Shift)  ((UINT32)RShiftU64 ((Value), (Shift)) & 0xF)
+
+STATIC
+VOID
+PrintCpuFeatures (
+  VOID
+  )
+{
+  UINT64  Midr;
+  UINT64  Isar0;
+  UINT64  Isar1;
+  UINT64  Isar2;
+  UINT64  Pfr0;
+  UINT64  Pfr1;
+
+  Midr  = READ_SYSREG ("S3_0_C0_C0_0");
+  Isar0 = READ_SYSREG ("S3_0_C0_C6_0");
+  Isar1 = READ_SYSREG ("S3_0_C0_C6_1");
+  Isar2 = READ_SYSREG ("S3_0_C0_C6_2");
+  Pfr0  = READ_SYSREG ("S3_0_C0_C4_0");
+  Pfr1  = READ_SYSREG ("S3_0_C0_C4_1");
+
+  Print (
+    L"ZETAINFO: MIDR 0x%lx (implementer 0x%x part 0x%x r%up%u)\n",
+    Midr,
+    (UINT32)RShiftU64 (Midr, 24) & 0xFF,
+    (UINT32)RShiftU64 (Midr, 4) & 0xFFF,
+    FIELD (Midr, 20),
+    FIELD (Midr, 0)
+    );
+  Print (L"ZETAINFO: ISAR0 0x%lx ISAR1 0x%lx ISAR2 0x%lx\n", Isar0, Isar1, Isar2);
+  Print (L"ZETAINFO: PFR0 0x%lx PFR1 0x%lx\n", Pfr0, Pfr1);
+  Print (
+    L"ZETAINFO: PAuth APA %u API %u APA3 %u GPA %u GPI %u GPA3 %u\n",
+    FIELD (Isar1, 4),
+    FIELD (Isar1, 8),
+    FIELD (Isar2, 12),
+    FIELD (Isar1, 24),
+    FIELD (Isar1, 28),
+    FIELD (Isar2, 8)
+    );
+  Print (
+    L"ZETAINFO: LRCPC %u FlagM %u Atomic %u BTI %u SME %u SVE %u\n",
+    FIELD (Isar1, 20),
+    FIELD (Isar0, 52),
+    FIELD (Isar0, 20),
+    FIELD (Pfr1, 0),
+    FIELD (Pfr1, 24),
+    FIELD (Pfr0, 32)
+    );
+}
+
 EFI_STATUS
 EFIAPI
 ZetaMemInfoEntry (
@@ -219,6 +278,7 @@ ZetaMemInfoEntry (
   }
 
   PrintGop ();
+  PrintCpuFeatures ();
   //
   // The button press that started the entry may still be queued.
   //
