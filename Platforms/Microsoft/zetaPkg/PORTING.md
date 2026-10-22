@@ -55,7 +55,7 @@ own resource HOB, as sheng's map does by hand.
 
 * `ZETA_VENDOR_HW = 1` (SMEM, clocks, RPMh, UFS, USB, stock DisplayDxe with the
   `Surface_Elgin_Panel_*` XMLs) is not wired; the DSC refuses it.
-* The second panel is not used; the frame buffer line pitch is unverified.
+* The second panel is not used.
 
 ## Hardware status
 
@@ -69,3 +69,17 @@ block device and the payload volume mounts. That loader did not start: the
 Secure Boot keys SecureBootHandler enrolls refuse unsigned images from a
 volume, so bring-up tools go in the FV and payload entries start them as
 `fv:<FILE_GUID>`.
+
+`Application/ZetaMemInfo` (FV, started from a payload `unixnu.toml` entry)
+read on the phone:
+
+| Item | Value |
+| --- | --- |
+| Boot CPU | MPIDR 0x81000000 (MT, core in Aff1: DT `reg` 0), EL1 |
+| CNTFRQ_EL0 | 19200000 Hz (= DT timer `clock-frequency`) |
+| ABL tree | 0xAF9FE000, 746298 bytes |
+| `/memory` | 0x80000000+0x39700000, 0xB9D00000+0x1E00000, 0xC0000000+0x1C0000000 (8117 MiB, all inside 0x80000000..0x280000000) |
+| GOP | 1344x1892, pitch 1344 pixels, PixelBlueGreenRedReserved8BitPerColor, 0xE1000000 + 0x9B3400 |
+
+The two holes (0xB9700000+0x600000, 0xBBB00000+0x4500000) are not in the
+device tree's reserved-memory; ABL leaves them out.
