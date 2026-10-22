@@ -107,6 +107,8 @@
   UniXNUPkg/Driver/UniXNUDxe/UniXNUDxe.inf
   zetaPkg/Drivers/ZetaBootMemoryDxe/ZetaBootMemoryDxe.inf
   zetaPkg/Drivers/ZetaKeyInputDxe/ZetaKeyInputDxe.inf
+  # Bring-up probe, run from a payload volume; not in the FDF
+  zetaPkg/Application/ZetaMemInfo/ZetaMemInfo.inf
   DarwinBootPkg/Driver/DarwinBoot.inf
 
 [LibraryClasses]

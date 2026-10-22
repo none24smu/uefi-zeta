@@ -1,0 +1,36 @@
+## @file
+#  zeta bring-up probe: DRAM ranges from the ABL device tree, boot CPU
+#  registers and the GOP mode, for the ADT. Not part of the firmware volume.
+#
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+##
+
+[Defines]
+  INF_VERSION    = 0x00010019
+  BASE_NAME      = ZetaMemInfo
+  FILE_GUID      = 0C7B5E1A-6F0D-4C55-9E2B-7A3D84F1C0E6
+  MODULE_TYPE    = UEFI_APPLICATION
+  VERSION_STRING = 0.1
+  ENTRY_POINT    = ZetaMemInfoEntry
+
+[Sources]
+  ZetaMemInfo.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  SiliciumPkg/SiliciumPkg.dec
+
+[LibraryClasses]
+  ArmLib
+  BaseLib
+  FdtLib
+  HobLib
+  UefiApplicationEntryPoint
+  UefiBootServicesTableLib
+  UefiLib
+
+[Guids]
+  gSiliciumEntryArgHobGuid      ## CONSUMES
+
+[Protocols]
+  gEfiGraphicsOutputProtocolGuid  ## CONSUMES
