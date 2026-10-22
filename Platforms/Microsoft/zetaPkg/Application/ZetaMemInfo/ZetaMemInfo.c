@@ -10,8 +10,9 @@
 
   The tree is found through the entry argument HOB that SEC keeps (x0 from
   ABL), the same source ZetaBootMemoryDxe uses. Every line starts with
-  "ZETAINFO:". Run it from a payload volume as \EFI\BOOT\BOOTAA64.EFI; it waits
-  for a key before returning to the menu.
+  "ZETAINFO:". It is in the FV, because the enrolled Secure Boot keys refuse
+  unsigned images from a volume; a payload entry starts it as
+  "fv:<FILE_GUID>". It waits for a key before returning to the menu.
 **/
 
 #include <PiDxe.h>
@@ -218,6 +219,12 @@ ZetaMemInfoEntry (
   }
 
   PrintGop ();
+  //
+  // The button press that started the entry may still be queued.
+  //
+  while (!EFI_ERROR (gST->ConIn->ReadKeyStroke (gST->ConIn, &Key))) {
+  }
+
   Print (L"ZETAINFO: press any button to return\n");
   gBS->WaitForEvent (1, &gST->ConIn->WaitForKey, &Index);
   gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);

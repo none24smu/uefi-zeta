@@ -1,6 +1,6 @@
 ## @file
 #  zeta bring-up probe: DRAM ranges from the ABL device tree, boot CPU
-#  registers and the GOP mode, for the ADT. Not part of the firmware volume.
+#  registers and the GOP mode, for the ADT. Lives in the FV (Secure Boot).
 #
 #  SPDX-License-Identifier: BSD-2-Clause-Patent
 ##

@@ -65,4 +65,7 @@ without a reset, the UniXNU menu appears on the frame buffer, and the volume
 keys move the selection (stages 1 and 2 of the UniXNU bring-up order).
 With a 4 MiB FAT ramdisk holding `\EFI\BOOT\BOOTAA64.EFI`, the menu adds
 "EFI loader on volume 1": `ZetaBootMemoryDxe` publishes the initrd as a
-block device and the payload volume mounts.
+block device and the payload volume mounts. That loader did not start: the
+Secure Boot keys SecureBootHandler enrolls refuse unsigned images from a
+volume, so bring-up tools go in the FV and payload entries start them as
+`fv:<FILE_GUID>`.

@@ -92,6 +92,10 @@ READ_LOCK_STATUS   = TRUE
   INF UniXNUPkg/Application/UniXNU/UniXNU.inf
   INF UniXNUPkg/Driver/UniXNUDxe/UniXNUDxe.inf
 
+  # Bring-up probe: Secure Boot (enrolled by SecureBootHandler) only runs
+  # unsigned images from the FV; start it with a UniXNU entry "fv:<FILE_GUID>"
+  INF zetaPkg/Application/ZetaMemInfo/ZetaMemInfo.inf
+
   # Device Tree
   #INF EmbeddedPkg/Drivers/DtPlatformDxe/DtPlatformDxe.inf
   #FILE FREEFORM = 25462CDA-221F-47DF-AC1D-259CFAA4E326 {
