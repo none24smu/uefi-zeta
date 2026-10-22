@@ -1,0 +1,36 @@
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = ZetaKeyInputDxe
+  FILE_GUID                      = AEFF7C63-203D-4DF2-86D7-1AA4BD5B2646
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = ZetaKeyInputDxeEntry
+
+[Sources]
+  ZetaKeyInputDxe.c
+  ZetaSpmiKeys.h
+
+[Packages]
+  MdePkg/MdePkg.dec
+
+[LibraryClasses]
+  BaseLib
+  DevicePathLib
+  UefiRuntimeServicesTableLib
+  BaseMemoryLib
+  DebugLib
+  MemoryAllocationLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  UefiLib
+
+[Protocols]
+  gEfiSimpleTextInProtocolGuid                  ## PRODUCES
+  gEfiDevicePathProtocolGuid                    ## PRODUCES
+
+[Guids]
+  gEfiEventExitBootServicesGuid                 ## CONSUMES
+  gEfiGlobalVariableGuid                        ## PRODUCES
+
+[Depex]
+  gEfiTimerArchProtocolGuid AND gEfiVariableArchProtocolGuid AND gEfiVariableWriteArchProtocolGuid
