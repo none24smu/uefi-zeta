@@ -1,0 +1,34 @@
+#
+# Microsoft Surface Duo 2 (zeta), SM8350
+#
+# The FD window is the stock one: XBL's UEFI segment and the stock uefiplat.cfg
+# "UEFI FD" region are both 0x9FC00000, 0x300000 bytes. Header v1 with an
+# appended DTB is what the other SM8350 Android 11 boards (venus, q2q) use with
+# the same ABL family; the stock boot image is v3.
+#
+
+#
+# Boot Shim Configs
+#
+[boot_shim]
+requires_kernel_header = true
+
+#
+# UEFI FD Configs
+#
+[uefi_fd]
+base = 0x9FC00000
+size = 0x300000
+
+#
+# Android Boot Image Kernel Configs
+#
+[boot_image_kernel]
+kernel_compression = "gzip"
+append_dtb         = true
+
+#
+# Android Boot Image Configs
+#
+[boot_image]
+header_version = 1
