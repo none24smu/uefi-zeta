@@ -83,3 +83,19 @@ read on the phone:
 
 The two holes (0xB9700000+0x600000, 0xBBB00000+0x4500000) are not in the
 device tree's reserved-memory; ABL leaves them out.
+
+CPU features of the boot core, read by the same probe:
+
+| Register | Value | Decoded |
+| --- | --- | --- |
+| MIDR_EL1 | 0x412FD050 | Arm, part 0xD05: Cortex-A55 r2p0 |
+| ID_AA64ISAR0_EL1 | 0x100010211120 | Atomic 2 (LSE), DP 1, TS 0 (no FlagM) |
+| ID_AA64ISAR1_EL1 | 0x100001 | APA 0, API 0, GPA 0, GPI 0 (no pointer authentication), LRCPC 1 |
+| ID_AA64ISAR2_EL1 | 0x0 | APA3 0, GPA3 0 |
+| ID_AA64PFR0_EL1 | 0x11112222 | SVE 0 |
+| ID_AA64PFR1_EL1 | 0x10 | BT 0 (no BTI), SME 0, SSBS 1 |
+
+There is no FEAT_PAuth, so arm64e code, which uses non-hint PAC instructions
+such as RETAB, BLRAA and LDRAA, does not run natively. The Cortex-A78 and
+Cortex-X1 cores are Armv8.2 without PAuth as well (Arm TRMs; not read by the
+probe, which runs on the boot core only).
